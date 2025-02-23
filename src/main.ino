@@ -1,92 +1,88 @@
+
+// NRF24 Connection
+// SCK=14, MISO=12, MOSI=13, CS=15, CE=16
+
+
 #include "RF24.h"
-#include <SPI.h>
 #include "esp_bt.h"
 #include "esp_wifi.h"
 
-constexpr int SPI_SPEED = 16000000;
+SPIClass *hp = nullptr;
 
-SPIClass *spiVSPI = nullptr;
-SPIClass *spiHSPI = nullptr;
-RF24 radioVSPI(15, 5, SPI_SPEED);
-RF24 radioHSPI(22, 21, SPI_SPEED);
+RF24 radio(16, 15, 16000000);
 
-int bluetooth_channels[] = {32, 34, 46, 48, 50, 52, 0, 1, 2, 4, 6, 8, 22, 24, 26, 28, 30, 74, 76, 78, 80};
-int ble_channels[] = {2, 26, 80};
+byte i = 45;
 
-void configureRadio(RF24 &radio, int channel, SPIClass *spi);
-void executeMode();
-void jamBLE();
-void jamBluetooth();
-void jamAll();
+unsigned int flag = 0;
 
-void setup()
-{
-    Serial.begin(115200);
 
-    esp_bt_controller_deinit();
-    esp_wifi_stop();
-    esp_wifi_deinit();
-    esp_wifi_disconnect();
+void setup(void) {
+  esp_bt_controller_deinit();
+  esp_wifi_stop();
+  esp_wifi_deinit();
+  Serial.begin(9600);
+  initHP();
+}
+void initHP() {
+  hp = new SPIClass(HSPI);
+  hp->begin();
+  if (radio.begin(hp)) {
+    delay(200);
+    Serial.println("BLE Jammer is Started !!!");
+    radio.setAutoAck(false);
+    radio.stopListening();
+    radio.setRetries(0, 0);
+    radio.setPayloadSize(5);   ////SET VALUE ON RF24.CPP
+    radio.setAddressWidth(3);  ////SET VALUE ON RF24.CPP
+    radio.setPALevel(RF24_PA_MAX, true);
+    radio.setDataRate(RF24_2MBPS);
+    radio.setCRCLength(RF24_CRC_DISABLED);
+    radio.printPrettyDetails();
+    radio.startConstCarrier(RF24_PA_MAX, i);
+  } else {
+    Serial.println("BLE Jammer couldn't be started !!!");
+  }
+}
+void two() {
 
-    spiVSPI = new SPIClass(VSPI);
-    spiVSPI->begin();
-    configureRadio(radioVSPI, ble_channels[0], spiVSPI);
+  ///CHANNEL WITH 2 SPACING HOPPING
+  if (flag == 0) {
+    i += 3;
+  } else {
+    i -= 3;
+  }
 
-    spiHSPI = new SPIClass(HSPI);
-    spiHSPI->begin();
-    configureRadio(radioHSPI, bluetooth_channels[0], spiHSPI);
+  if ((i > 79) && (flag == 0)) {
+    flag = 1;
+  } else if ((i < 2) && (flag == 1)) {
+    flag = 0;
+  }
+
+  radio.setChannel(i);
+  //Serial.println(i);
 }
 
-void configureRadio(RF24 &radio, int channel, SPIClass *spi)
-{
-    if (radio.begin(spi))
-    {
-        radio.setAutoAck(false);
-        radio.stopListening();
-        radio.setRetries(0, 0);
-        radio.setPALevel(RF24_PA_MAX, true);
-        radio.setDataRate(RF24_2MBPS);
-        radio.setCRCLength(RF24_CRC_DISABLED);
-        radio.startConstCarrier(RF24_PA_HIGH, channel);
-    }
+void one() {
+  ////SWEEP CHANNEL
+  for (int i = 0; i < 79; i++) {
+    radio.setChannel(i);
+  }
 }
 
-void loop()
-{
-    executeMode();
-}
+/*YOU CAN DO RANDOM CHANNEL 
 
-void executeMode()
-{
-    jamAll();
-}
+radio.setChannel(random(79));
+*/
 
-void jamBLE()
-{
-    int randomIndex = random(0, sizeof(ble_channels) / sizeof(ble_channels[0]));
-    int channel = ble_channels[randomIndex];
-    radioVSPI.setChannel(channel);
-    radioHSPI.setChannel(channel);
-}
 
-void jamBluetooth()
-{
-    int randomIndex = random(0, sizeof(bluetooth_channels) / sizeof(bluetooth_channels[0]));
-    int channel = bluetooth_channels[randomIndex];
-    radioVSPI.setChannel(channel);
-    radioHSPI.setChannel(channel);
-}
 
-void jamAll()
-{
-    if (random(0, 2))
-    {
-        jamBluetooth();
-    }
-    else
-    {
-        jamBLE();
-    }
-    // delayMicroseconds(20);
-    delay(2);
+
+void loop(void) {
+
+  if (random(0, 2) == 0)
+    two();
+
+  else {
+    one();
+  }
 }
