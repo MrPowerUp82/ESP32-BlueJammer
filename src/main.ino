@@ -9,7 +9,7 @@
 
 SPIClass *hp = nullptr;
 
-RF24 radio(16, 15, 16000000);
+RF24 radio(26, 25, 16000000);
 
 byte i = 45;
 
