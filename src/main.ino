@@ -1,6 +1,6 @@
 
 // NRF24 Connection
-// SCK=14, MISO=12, MOSI=13, CS=15, CE=16
+// SCK=14, MISO=12, MOSI=13, CS=25, CE=26
 
 
 #include "RF24.h"
@@ -20,6 +20,7 @@ void setup(void) {
   esp_bt_controller_deinit();
   esp_wifi_stop();
   esp_wifi_deinit();
+  esp_wifi_disconnect();
   Serial.begin(9600);
   initHP();
 }

@@ -30,6 +30,18 @@ RF-Clown é uma ferramenta de interferência de sinal BLE/Bluetooth baseada no E
 | MISO          | GPIO 19          |
 | IRQ           |                  |
 
+#### My Connection
+
+| nRF24L01 | ESP32 Dev Kit |
+|----------|---------------|
+| VCC      | 3.3V          |
+| GND      | GND           |
+| CE       | GPIO 26       |
+| CSN      | GPIO 25       |
+| SCK      | GPIO 14       |
+| MOSI     | GPIO 13       |
+| MISO     | GPIO 12       |
+
 ### Inspirado em
  - [NRF24L01 Jammer Wokwi](https://wokwi.com/projects/411928608367368193)
  - [RF-Clown Hackster.io](https://www.hackster.io/CiferTech/rf-clown-your-portable-ble-bluetooth-jamming-tool-7f74e4)
