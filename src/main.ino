@@ -9,7 +9,7 @@
 
 SPIClass *hp = nullptr;
 
-RF24 radio(26, 25, 16000000);
+RF24 radio(26, 25, 16000000); // CE, CSN, SPI_SPEED
 
 byte i = 45;
 
@@ -80,7 +80,7 @@ radio.setChannel(random(79));
 
 void loop(void) {
 
-  if (random(0, 2) == 0)
+  if (random(0, 2))
     two();
 
   else {
