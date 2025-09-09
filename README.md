@@ -2,7 +2,7 @@
 ## ESP32 BLE/Bluetooth Jamming Tool
 
 ### Descrição
-RF-Clown é uma ferramenta de interferência de sinal BLE/Bluetooth baseada no ESP32. Ela permite realizar testes de segurança em dispositivos Bluetooth, simulando ataques de negação de serviço (DoS) e outras formas de interferência de sinal. Esta ferramenta é destinada a pesquisadores de segurança e deve ser usada de forma ética e legal.
+BlueJammer é uma ferramenta de interferência de sinal BLE/Bluetooth baseada no ESP32. Ela permite realizar testes de segurança em dispositivos Bluetooth, simulando ataques de negação de serviço (DoS) e outras formas de interferência de sinal. Esta ferramenta é destinada a pesquisadores de segurança e deve ser usada de forma ética e legal.
 
 ### PinOut
 
